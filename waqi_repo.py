@@ -1,15 +1,17 @@
 import requests
 import json
 import traceback
+from urls import WQAPI_BASE_URL
+from tokens import TOKEN
 
 TOKEN = ""
 BASE_URL = f"https://api.waqi.info/feed"
 
 
-def get_waqi_data(city: str) -> dict:
+def get_waqi_data(self, city: str) -> dict:
 
     # https://api.waqi.info/feed/india/?token=<TOKEN>
-    r_url = f"{BASE_URL}/{city}/?token={TOKEN}"
+    r_url = f"{WQAPI_BASE_URL}/{city}/?token={TOKEN}"
 
     try:
         response = requests.get(r_url)
@@ -21,7 +23,7 @@ def get_waqi_data(city: str) -> dict:
 
         else:
             raise Exception(
-                f"Exception while calling {BASE_URL}- " + str(response.json()),
+                f"Exception while calling {WQAPI_BASE_URL}- " + str(response.json()),
             )
 
     except Exception as e:
