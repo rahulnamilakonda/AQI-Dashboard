@@ -1,4 +1,6 @@
 .env
 output.json
 note_book.ipynb
-**/__pycache__/
+**/__pycache__
+*/__pycache__/
+*.pyc
