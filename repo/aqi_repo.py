@@ -3,7 +3,7 @@ import json
 import traceback
 from app_data.network.network_services import NetworkServices
 from utils.constants.urls import WQAPI_BASE_URL
-from config.tokens import TOKEN
+from config.tokens import WAQI_TOKEN
 from main import DEBUG
 
 
@@ -11,7 +11,7 @@ def get_waqi_data(city: str) -> dict:
     nwts = NetworkServices()
 
     # https://api.waqi.info/feed/india/?token=<TOKEN>
-    r_url = f"{WQAPI_BASE_URL}/{city}/?token={TOKEN}"
+    r_url = f"{WQAPI_BASE_URL}/{city}/?token={WAQI_TOKEN}"
 
     try:
         response = nwts.get(r_url)
