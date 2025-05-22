@@ -16,3 +16,6 @@ GET_MEASUREMENTS_BY_SENSOR_ID_MONTHS = (
 GET_MEASUREMENTS_BY_SENSOR_ID_YEARS = (
     "https://api.openaq.org//v3/sensors/{sensors_id}/days/monthly"
 )
+
+
+WQAPI_BASE_URL = ""
