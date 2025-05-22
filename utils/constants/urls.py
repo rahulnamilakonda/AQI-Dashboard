@@ -18,4 +18,4 @@ GET_MEASUREMENTS_BY_SENSOR_ID_YEARS = (
 )
 
 
-WQAPI_BASE_URL = ""
+WQAPI_BASE_URL = "https://api.waqi.info/feed"
