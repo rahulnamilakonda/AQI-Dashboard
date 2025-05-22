@@ -6,16 +6,16 @@ GET_LOCATIONS = "https://api.openaq.org/v3/locations"
 
 # To get historical data we use measurements.
 GET_MEASUREMENTS_BY_SENSOR_ID_DAYS = (
-    "https://api.openaq.org//v3/sensors/{sensors_id}/measurements/daily"
+    "https://api.openaq.org/v3/sensors/{sensors_id}/measurements/daily"
 )
 
 GET_MEASUREMENTS_BY_SENSOR_ID_MONTHS = (
-    "https://api.openaq.org//v3/sensors/{sensors_id}/measurements/years"
+    "https://api.openaq.org/v3/sensors/{sensors_id}/measurements/years"
 )
 
 GET_MEASUREMENTS_BY_SENSOR_ID_YEARS = (
-    "https://api.openaq.org//v3/sensors/{sensors_id}/days/monthly"
+    "https://api.openaq.org/v3/sensors/{sensors_id}/days/monthly"
 )
 
-
+# Real Time AQI
 WQAPI_BASE_URL = "https://api.waqi.info/feed"
