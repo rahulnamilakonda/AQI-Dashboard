@@ -39,3 +39,8 @@ class ServerSideException(AppExceptions):
 class FetchDataException(AppExceptions):
     def __init__(self, error):
         super().__init__(error, "FetchDataException")
+
+
+class WAQIErrorException(AppExceptions):
+    def __init__(self, error):
+        super().__init__(error, "WAQIErrorException")
