@@ -1,0 +1,2 @@
+WAQI_SUCCESS_STATUS = "ok"
+WAQI_ERROR_STATUS = "error"
