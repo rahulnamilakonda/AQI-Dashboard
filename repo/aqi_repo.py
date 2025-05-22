@@ -32,13 +32,12 @@ class AQIRepo:
 
                 return response
 
-            elif response["status"] == WAQI_ERROR_STATUS and "data" in response:
-                raise WAQIErrorException(response["data"])
+            elif response["status"] == WAQI_ERROR_STATUS:
+                if "data" in response:
+                    raise WAQIErrorException(response["data"])
 
-            elif response["status"] == WAQI_ERROR_STATUS and "message" in response:
-                raise WAQIErrorException(response["message"])
-
-            # TODO:add message: invalidKey
+                elif "message" in response:
+                    raise WAQIErrorException(response["message"])
 
         except Exception as e:
             raise e
