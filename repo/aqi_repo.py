@@ -25,15 +25,13 @@ class AQIRepo:
 
     def get_real_time_waqi(
         self,
+        real_time_aqi: RealTimeAQI,
         city: str = None,
         lat: str = None,
         long: str = None,
         lat2: str = None,
         long2: str = None,
-        real_time_aqi: RealTimeAQI = None,
     ) -> dict:
-
-        assert real_time_aqi != None, "Please provide real time AQI val"
 
         # https://api.waqi.info/feed/india/?token=<TOKEN>
         r_url = None
@@ -106,9 +104,9 @@ class AQIRepo:
 
     # get country id's,parameters sensors ids.
     def get_locations(self, country_id: int) -> dict:
-        parms = {"limit": "1000", "locations_id": country_id, "page": 1}
+        parms = {"countries_id": country_id, "page": 1}
         pages_found = True
-        response = OpenQIResponse(_has_next_page=pages_found)
+        response = OpenQIResponse()
 
         try:
             while pages_found:
@@ -128,19 +126,23 @@ class AQIRepo:
     def get_measurements(
         self, sensor_id: int, date_to: str, date_from: str, measurement: Measurements
     ):
+
+        assert measurement in Measurements, "Please provide a valid measurement"
+
         parms = {
-            "limit": "1000",
-            "sensors_id": sensor_id,
+            "limit": 1000,
+            # "sensors_id": sensor_id,
             date_from: date_from,
             date_to: date_to,
             "page": 1,
         }
         pages_found = True
-        response = OpenQIResponse(_has_next_page=pages_found)
+        response = OpenQIResponse()
+        r_url = measurement.value.format_map({"sensors_id": sensor_id})
 
         try:
             while pages_found:
-                temp_response = self.ntws.get(measurement, parms, self.headers)
+                temp_response = self.ntws.get(r_url, parms, self.headers)
 
                 pages_found = self.__has_next_page__(
                     temp_response=temp_response, res=response
@@ -153,7 +155,8 @@ class AQIRepo:
             raise e
 
     def __has_next_page__(self, temp_response, res: OpenQIResponse):
-        if temp_response["meta"]["found"] < 1:
+
+        if len(temp_response["results"]) < 1:
 
             if res.response is None:
                 res.response = temp_response
