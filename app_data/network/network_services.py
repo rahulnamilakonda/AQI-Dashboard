@@ -13,9 +13,9 @@ from app_data.exceptions.app_exceptions import (
 
 class NetworkServices(BaseApiServices):
 
-    def get(self, url, parms=None):
+    def get(self, url, parms=None, headers=None):
         try:
-            response = requests.get(url, params=parms)
+            response = requests.get(url, params=parms, headers=headers)
             return self.__get_response(response)
         except requests.exceptions.ReadTimeout as errrt:
             raise TimeOutException(errrt)
