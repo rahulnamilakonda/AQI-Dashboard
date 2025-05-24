@@ -132,12 +132,14 @@ class AQIRepo:
         parms = {
             "limit": 1000,
             # "sensors_id": sensor_id,
-            date_from: date_from,
-            date_to: date_to,
+            "date_from": date_from,
+            "date_to": date_to,
             "page": 1,
         }
+
         pages_found = True
         response = OpenQIResponse()
+
         r_url = measurement.value.format_map({"sensors_id": sensor_id})
 
         try:
