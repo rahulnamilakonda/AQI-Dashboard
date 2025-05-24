@@ -1,3 +1,5 @@
+import math
+import geocoder
 import pandas as pd
 import numpy as np
 
@@ -20,6 +22,9 @@ class AQIController:
         # px.bar(data, x='Pollutants', y='values', width=500, height=500)
 
         return mod_df[mod_df["Pollutants"].isin(pollutants)]
+
+    def get_nearby_stations(self, res: dict) -> pd.DataFrame:
+        pass
 
     def get_dominant_pol(self, res: dict) -> str:
         return res["data"]["dominentpol"]
@@ -65,8 +70,12 @@ class AQIController:
         # fig.update_layout(height=600, width=800, title_text=", ".join(pollutants), xaxis=dict(tickmode='linear'),)
         # fig.show()
 
-    def get_flattended_measurement(self, res):
-        res_dicts = res["results"]
+    def get_flattended_measurement(self, res, key):
+        """
+        Key can be either "results" or "data"
+
+        """
+        res_dicts = res[key]
         flattened_dict = {}
         for i in range(len(res_dicts)):
             for key, val in res_dicts[i].items():
@@ -79,11 +88,11 @@ class AQIController:
                                 if f"{key}_{key2}_{key3}" not in flattened_dict:
                                     flattened_dict[f"{key}_{key2}_{key3}"] = []
                                 flattened_dict[f"{key}_{key2}_{key3}"].append(val3)
+                        else:
+                            if f"{key}_{key2}" not in flattened_dict:
+                                flattened_dict[f"{key}_{key2}"] = []
 
-                        if f"{key}_{key2}" not in flattened_dict:
-                            flattened_dict[f"{key}_{key2}"] = []
-
-                        flattened_dict[f"{key}_{key2}"].append(val2)
+                            flattened_dict[f"{key}_{key2}"].append(val2)
 
                 else:
 
@@ -93,8 +102,12 @@ class AQIController:
 
         return flattened_dict
 
-    def get_measurement_df(self, res):
-        return pd.DataFrame.from_dict(res)
+    def get_measurement_df(self, res, sensor_id=None):
+        df = pd.DataFrame.from_dict(res)
+        if sensor_id:
+            df["sensor_id"] = sensor_id
+
+        return df
 
     def get_transformed_measurement(self, df) -> pd.DataFrame:
         t_df: pd.DataFrame = df[
@@ -133,3 +146,62 @@ class AQIController:
         t_df["day"] = t_df["mid_datetime"].dt.day
 
         return t_df
+
+        # tickvals = list(range(1, len(heatmap_df.columns) + 1))
+        # ticktext = list(str(col) for col in heatmap_df.columns)
+
+        # fig = px.imshow(heatmap_df, labels=dict(x='Days', y='Month-Year',color='PM2.5 (Avg)'))
+        # fig.update_layout(title="PM2.5 Summary Average Heatmap (Plotly Interactive)")
+        # fig.update_xaxes(tickmode='array', tickvals=tickvals, ticktext=ticktext, dtick=1,
+        #     tickson="labels")
+        # fig.show()
+
+        # line
+        # px.line(t_df, x='mid_datetime', y='value',labels={
+        # 'mid_datetime': 'Date',
+        # 'value': 'PM2.5 (µg/m³)'
+        # },)
+
+    def destination_point(
+        self, lat: int, long: int, distance_km: int = 50, bearing_deg: int = 90
+    ):
+        R = 6371  # Earth radius in km
+        bearing = math.radians(bearing_deg)
+        lat = math.radians(lat)
+        long = math.radians(long)
+
+        lat2 = math.asin(
+            math.sin(lat) * math.cos(distance_km / R)
+            + math.cos(lat) * math.sin(distance_km / R) * math.cos(bearing)
+        )
+
+        lon2 = long + math.atan2(
+            math.sin(bearing) * math.sin(distance_km / R) * math.cos(lat),
+            math.cos(distance_km / R) - math.sin(lat) * math.sin(lat2),
+        )
+
+        return math.degrees(lat2), math.degrees(lon2)
+
+    def clean_all_stations_res(self, res) -> pd.DataFrame:
+        df = pd.DataFrame.from_dict(res)
+        df["station_name"] = df["station_name"].str.split(",").str.get(0)
+        df["station_time"] = pd.to_datetime(df["station_time"])
+        df["aqi"] = df["aqi"].astype(np.int16)
+
+        return df
+
+    # fig = px.scatter(data_frame=clean_df, x='station_name', size='aqi',labels={'station_name':'Location', 'index':'AQI',}, title='Location Vs AQI')
+    # fig.update_traces(marker_color='blue')
+    # fig.show()
+
+    def get_current_gps_coordinates(
+        self,
+    ):
+        try:
+            g = geocoder.ip("me")
+            if g.latlng is not None:
+                return g.latlng
+            else:
+                return None
+        except Exception as e:
+            raise e
