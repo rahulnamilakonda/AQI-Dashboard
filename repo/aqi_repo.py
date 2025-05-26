@@ -1,3 +1,4 @@
+from debug import DEBUG
 import requests
 import json
 import traceback
@@ -13,7 +14,8 @@ from utils.constants.urls import (
     GET_LOCATIONS,
 )
 from config.tokens import OPENAQ_TOKEN, WAQI_TOKEN
-from main import DEBUG
+
+import streamlit as st
 
 
 class AQIRepo:
