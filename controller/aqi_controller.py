@@ -2,6 +2,10 @@ import math
 import geocoder
 import pandas as pd
 import numpy as np
+from datetime import datetime
+import streamlit as st
+
+from utils.constants.enums import Stats
 
 
 class AQIController:
@@ -23,16 +27,13 @@ class AQIController:
 
         return mod_df[mod_df["Pollutants"].isin(pollutants)]
 
-    def get_nearby_stations(self, res: dict) -> pd.DataFrame:
-        pass
-
     def get_dominant_pol(self, res: dict) -> str:
         return res["data"]["dominentpol"]
 
     def get_real_time_aqi(self, res: dict) -> int:
         return res["data"]["aqi"]
 
-    def get_unique_pollutants(self, res: dict) -> int:
+    def get_avail_unique_pollutants(self, res: dict) -> list:
         return list(dict(res["data"]["forecast"]["daily"]).keys())
 
     def get_pollutant_forecast(self, res: dict, pollnt: str) -> pd.DataFrame:
@@ -45,8 +46,11 @@ class AQIController:
 
         return df
 
+    def get_rt_aqi_frcst_days(self, df: pd.DataFrame):
+        return df["day"].unique().shape[0]
+
     def get_all_pollutants(self, res):
-        pollnts = self.get_unique_pollutants(res)
+        pollnts = self.get_avail_unique_pollutants(res)
         result_dfs = []
         for pollnt in pollnts:
             temp_df = self.get_pollutant_forecast(res, pollnt)
@@ -57,7 +61,7 @@ class AQIController:
         result_df["day"] = pd.to_datetime(result_df["day"])
         return result_df
 
-    def get_all_polluntant_avg(self, res):
+    def get_all_polluntant_stats(self, df, stats: Stats) -> pd.DataFrame:
         pass
         # fig = make_subplots(cols=3, rows=1, shared_yaxes=True)
 
@@ -194,8 +198,9 @@ class AQIController:
     # fig.update_traces(marker_color='blue')
     # fig.show()
 
+    @st.cache_data
     def get_current_gps_coordinates(
-        self,
+        _self,
     ):
         try:
             g = geocoder.ip("me")
@@ -205,3 +210,17 @@ class AQIController:
                 return None
         except Exception as e:
             raise e
+
+    def get_gretting(self):
+        hour = datetime.now().hour
+        if 4 <= hour < 12:
+            return "Good Morning"
+
+        elif 12 <= hour < 16:
+            return "Good Afternoon"
+
+        else:
+            return "Good Evening"
+
+    def cord_from_real_aqi_response(self, res: dict) -> tuple:
+        return tuple(res["data"]["city"]["geo"])
