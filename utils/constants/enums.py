@@ -20,3 +20,9 @@ class RealTimeAQI(enum.Enum):
     CITY_BASED = WQAPI_REAL_TIME_CITY
     LAT_LONG = WQAPI_REAL_TIME_CORDS
     LAT_LONG_RANGE = WQAPI_REAL_TIME_CORDS_RANGE
+
+
+class Stats(enum.Enum):
+    AVERAGE = "avg"
+    MINIMUM = "min"
+    MAXIMUM = "max"
