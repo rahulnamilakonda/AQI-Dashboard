@@ -7,10 +7,22 @@ import plotly.express as px
 from controller.aqi_controller import AQIController
 from repo.aqi_repo import *
 from utils.constants.enums import RealTimeAQI, Stats
-from utils.helpers.helper import draw_near_by_stations, get_error_message, markdown
+from utils.helpers.helper import (
+    draw_footer,
+    draw_header,
+    draw_near_by_stations,
+    draw_raqi_forecast,
+    get_error_message,
+    markdown,
+)
+
+st.set_page_config(page_title="Dashboard", layout="wide")
 
 aqi_cont = AQIController()
 aqi_repo = AQIRepo()
+
+# st.session_state.pop("res", None)
+# st.session_state.pop("disable_input", None)
 
 
 @st.cache_data
@@ -43,26 +55,7 @@ def show_error(exception):
     )
 
 
-markdown(
-    """
-<style>
-            body{
-            background-color: white;
-            }
-
-            .stApp{
-            background-color: white,
-            }
-</style>
-"""
-)
-
-
-markdown(
-    """<h1 style='text-align: center; font-weight: bold;'>Air Quality Index (AQI)</h1>""",
-)
-
-st.image(r"C:\data-science-projects\waqi\assets\aqi_head.png", use_container_width=True)
+draw_header()
 
 exception = None
 res = None
@@ -133,3 +126,12 @@ else:
                 show_error(exception)
             else:
                 draw_near_by_stations(aqi_cont, station_res)
+
+
+markdown(
+    """
+    <div style='margin-top: 200px;'></div>
+    """,
+    unsafe_allow_html=True,
+)
+draw_footer()
