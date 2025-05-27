@@ -32,20 +32,20 @@ def get_error_message(exception):
     elif type(exception) is FetchDataException:
         return "Failed to fetch data"
     elif type(exception) is WAQIErrorException:
-        return "Failed to fetch data"
+        return exception.error
     else:
         return exception
 
 
-def draw_near_by_stations(aqi_cont, station_res):
+def draw_near_by_stations(aqi_cont: AQIController, station_res):
     station_res = aqi_cont.get_flattended_measurement(station_res, "data")
-    station_res_df = aqi_cont.clean_all_stations_res(station_res)
 
     if not station_res:
         markdown(
             "<h6 style='text-align:center font-weight:italic'> Data not found</h6>"
         )
     else:
+        station_res_df = aqi_cont.clean_all_stations_res(station_res)
         with st.expander(f"Show near by stations data"):
             st.dataframe(station_res_df, hide_index=True)
 
@@ -65,12 +65,13 @@ def draw_near_by_stations(aqi_cont, station_res):
         st.plotly_chart(fig, use_container_width=True)
 
 
-def draw_raqi_forecast(aqi_cont: AQIController, res: dict):
+def draw_raqi_forecast(aqi_cont: AQIController, res: dict, search_str: str = None):
     aqi_val = aqi_cont.get_real_time_aqi(res)
     dom_ploutant = aqi_cont.get_dominant_pol(res)
+    location = search_str if search_str else "you're location"
 
     markdown(
-        f"<h4 style='text-align:center; font-weight: 300;'> Current AQI at you're location is: <b>{aqi_val}</b> </h4>"
+        f"<h4 style='text-align:center; font-weight: 300;'> Current AQI at {location} is: <b>{aqi_val}</b> </h4>"
     )
     markdown(f"<h3> Dominent Polutant: {dom_ploutant} </h3>")
 
@@ -147,3 +148,100 @@ def draw_raqi_forecast(aqi_cont: AQIController, res: dict):
                     labels={"day": "Day", y: f"{stats_sel}"},
                 )
                 st.plotly_chart(fig, use_container_width=True)
+
+
+def draw_header(pname=None):
+    page_name = ""
+
+    if pname:
+        page_name = f"- {pname}"
+
+    markdown(
+        f"""<h1 style='text-align: center; font-weight: bold;'>Air Quality Index (AQI){page_name}</h1>""",
+    )
+
+    st.image(
+        r"C:\data-science-projects\waqi\assets\aqi_head.png", use_container_width=True
+    )
+
+
+def draw_footer():
+
+    st.markdown(
+        """
+        ## Why is AQI (Air Quality Index) Important?
+
+        The **Air Quality Index (AQI)** is a critical indicator of how clean or polluted the air is, and what associated health effects might be of concern for you or your community.
+
+        ### 🚨 Key Reasons Why AQI Matters:
+
+        - **🫁 Public Health:** High AQI levels are linked to respiratory diseases, heart conditions, and other health issues — especially for vulnerable groups like children, the elderly, and those with pre-existing conditions.
+        - **🏙️ Environmental Awareness:** AQI helps people understand pollution trends in their area and take action, like avoiding outdoor activity when air is unhealthy.
+        - **📊 Policy & Action:** Governments and organizations use AQI data to implement clean air policies, regulate emissions, and monitor the effectiveness of interventions.
+        - **🧭 Personal Decision-Making:** Knowing the AQI lets individuals make informed decisions — whether to wear a mask, use air purifiers, or plan outdoor activities.
+
+        ### 📍 Local Relevance
+
+        Tracking real-time AQI helps you stay aware of your **immediate surroundings**, empowering you to protect yourself and your loved ones.
+
+        > “When you can’t see air pollution, AQI helps you feel its presence.”
+
+        ## AQI table
+        """
+    )
+
+    markdown(
+        """
+
+    <table class="table table-bordered center" style="width:95%">
+        <caption style="text-align:center; font-size: 1.7em;color:black;padding-bottom:5px"><strong>AQI Basics for Ozone and Particle Pollution</strong></caption>
+        <thead>
+            <tr style="background: rgb(225, 235, 244); color: black;">
+                <th scope="col" style="text-align:center;width:15%;vertical-align: text-top;padding:5px;font-size:19px">Daily AQI Color</th>
+                <th scope="col" style="text-align:center;width:15%;vertical-align: text-top;padding:5px;font-size:19px">Levels of Concern</th>
+                <th scope="col" style="text-align:center;width:15%;vertical-align: text-top;padding:5px;font-size:19px">Values of Index</th>
+                <th scope="col" style="text-align:center;width:30%;vertical-align: text-top;padding:5px;font-size:19px">Description of Air Quality</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr style="background: rgb(0, 228, 0); color: black;">
+                <td><strong>Green</strong></td>
+                <td id="good"><strong>Good</strong></td>
+                <td><strong>0 to 50</strong></td>
+                <td><strong>Air quality is satisfactory, and air pollution poses little or no risk.</strong></td>
+            </tr>
+            <tr style="background:yellow; color: black;">
+                <td><strong>Yellow</strong></td>
+                <td id="mod"><strong>Moderate</strong></td>
+                <td><strong>51 to 100</strong></td>
+                <td><strong>Air quality is acceptable. However, there may be a risk for some people, particularly those who are unusually sensitive to air pollution.</strong></td>
+            </tr>
+            <tr style="background: rgb(255, 126, 0); color: black;">
+                <td><strong>Orange</strong></td>
+                <td id="sens"><strong>Unhealthy for Sensitive Groups</strong></td>
+                <td><strong>101 to 150</strong></td>
+                <td><strong>Members of sensitive groups may experience health effects. The general public is less likely to be affected.</strong></td>
+            </tr>
+            <tr style="background:red; color: black;">
+                <td><strong>Red</strong></td>
+                <td id="unh"><strong>Unhealthy</strong></td>
+                <td><strong>151 to 200</strong></td>
+                <td><strong>Some members of the general public may experience health effects; members of sensitive groups may experience more serious health effects.</strong></td>
+            </tr>
+            <tr style="background: rgb(143, 63, 151);color:white;">
+                <td><strong>Purple</strong></td>
+                <td id="vunh"><strong>Very Unhealthy</strong></td>
+                <td><strong>201 to 300</strong></td>
+                <td><strong>Health alert: The risk of health effects is increased for everyone.</strong></td>
+            </tr>
+            <tr style="background: rgb(126, 0, 35 );color:white;">
+                <td><strong>Maroon</strong></td>
+                <td id="haz"><strong>Hazardous</strong></td>
+                <td><strong>301 and higher</strong></td>
+                <td><strong>Health warning of emergency conditions: everyone is more likely to be affected.</strong></td>
+            </tr>
+        </tbody>
+    </table>
+
+    """
+    )
