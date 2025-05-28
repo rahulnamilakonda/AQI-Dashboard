@@ -10,7 +10,7 @@ class LocalRepo:
     def __init__(self):
         self._conn = sqlite3.connect("sql.db")
         self._cursor = self._conn.cursor()
-        self._create_table()
+        # self._create_table()
 
     def __del__(self):
         self._conn.close()
@@ -94,4 +94,4 @@ if __name__ == "__main__":
     if DEBUG:
         lr = LocalRepo()
         # lr._drop()
-        lr._select()
+        # lr._select()

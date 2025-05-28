@@ -1,3 +1,4 @@
+import json
 import math
 import geocoder
 import pandas as pd
@@ -82,29 +83,35 @@ class AQIController:
         res_dicts = res[key]
         flattened_dict = {}
         for i in range(len(res_dicts)):
-            for key, val in res_dicts[i].items():
-                if type(val) is dict:
-
-                    for key2, val2 in val.items():
-                        if type(val2) is dict:
-
-                            for key3, val3 in val2.items():
-                                if f"{key}_{key2}_{key3}" not in flattened_dict:
-                                    flattened_dict[f"{key}_{key2}_{key3}"] = []
-                                flattened_dict[f"{key}_{key2}_{key3}"].append(val3)
-                        else:
-                            if f"{key}_{key2}" not in flattened_dict:
-                                flattened_dict[f"{key}_{key2}"] = []
-
-                            flattened_dict[f"{key}_{key2}"].append(val2)
-
-                else:
-
-                    if key not in flattened_dict:
-                        flattened_dict[key] = []
-                    flattened_dict[key].append(val)
+            if type(res_dicts[i]) is list:
+                lst_dicts = res_dicts[i]
+                for j in range(len(lst_dicts)):
+                    for key, val in lst_dicts[j].items():
+                        self.__parse__(key, flattened_dict, val)
+            else:
+                for key, val in res_dicts[i].items():
+                    self.__parse__(key, flattened_dict, val)
 
         return flattened_dict
+
+    def __parse__(self, key, flattened_dict, val):
+        if type(val) is dict:
+            for key2, val2 in val.items():
+                if type(val2) is dict:
+                    for key3, val3 in val2.items():
+                        if f"{key}_{key2}_{key3}" not in flattened_dict:
+                            flattened_dict[f"{key}_{key2}_{key3}"] = []
+                        flattened_dict[f"{key}_{key2}_{key3}"].append(val3)
+                else:
+                    if f"{key}_{key2}" not in flattened_dict:
+                        flattened_dict[f"{key}_{key2}"] = []
+
+                    flattened_dict[f"{key}_{key2}"].append(val2)
+
+        else:
+            if key not in flattened_dict:
+                flattened_dict[key] = []
+            flattened_dict[key].append(val)
 
     def get_measurement_df(self, res, sensor_id=None):
         df = pd.DataFrame.from_dict(res)
@@ -114,24 +121,27 @@ class AQIController:
         return df
 
     def get_transformed_measurement(self, df) -> pd.DataFrame:
-        t_df: pd.DataFrame = df[
-            [
-                "value",
-                "parameter_name",
-                "parameter_units",
-                "period_datetimeFrom_utc",
-                "period_datetimeTo_utc",
-                "summary_min",
-                "summary_max",
-                "summary_q02",
-                "summary_q25",
-                "summary_median",
-                "summary_q75",
-                "summary_q98",
-                "summary_avg",
-                "summary_sd",
+        try:
+            t_df: pd.DataFrame = df[
+                [
+                    "value",
+                    "parameter_name",
+                    "parameter_units",
+                    "period_datetimeFrom_utc",
+                    "period_datetimeTo_utc",
+                    "summary_min",
+                    "summary_max",
+                    "summary_q02",
+                    "summary_q25",
+                    "summary_median",
+                    "summary_q75",
+                    "summary_q98",
+                    "summary_avg",
+                    "summary_sd",
+                ]
             ]
-        ]
+        except Exception as e:
+            raise e
 
         t_df["period_datetimeTo_utc"] = pd.to_datetime(t_df["period_datetimeTo_utc"])
         t_df["period_datetimeFrom_utc"] = pd.to_datetime(
@@ -150,21 +160,6 @@ class AQIController:
         t_df["day"] = t_df["mid_datetime"].dt.day
 
         return t_df
-
-        # tickvals = list(range(1, len(heatmap_df.columns) + 1))
-        # ticktext = list(str(col) for col in heatmap_df.columns)
-
-        # fig = px.imshow(heatmap_df, labels=dict(x='Days', y='Month-Year',color='PM2.5 (Avg)'))
-        # fig.update_layout(title="PM2.5 Summary Average Heatmap (Plotly Interactive)")
-        # fig.update_xaxes(tickmode='array', tickvals=tickvals, ticktext=ticktext, dtick=1,
-        #     tickson="labels")
-        # fig.show()
-
-        # line
-        # px.line(t_df, x='mid_datetime', y='value',labels={
-        # 'mid_datetime': 'Date',
-        # 'value': 'PM2.5 (µg/m³)'
-        # },)
 
     def destination_point(
         self, lat: int, long: int, distance_km: int = 50, bearing_deg: int = 90
@@ -224,3 +219,65 @@ class AQIController:
 
     def cord_from_real_aqi_response(self, res: dict) -> tuple:
         return tuple(res["data"]["city"]["geo"])
+
+    def get_countries(self, country_res: dict, key: str = "results") -> dict:
+        falternd_dict = self.get_flattended_measurement(res=country_res, key=key)
+        falternd_df = self.get_measurement_df(res=falternd_dict)
+        falternd_df_cname_id = falternd_df[["name", "id"]]
+        falternd_df_cname_id = falternd_df_cname_id.sort_values("name", ascending=True)
+
+        return dict(
+            zip(
+                falternd_df_cname_id["name"],
+                falternd_df_cname_id["id"],
+            )
+        )
+
+    def get_stations(self, stations_res: dict, key: str = "results") -> dict:
+        faltened_dict = self.get_flattended_measurement(res=stations_res, key=key)
+        for key in [
+            "datetimeFirst",
+            "datetimeLast",
+            "datetimeFirst_utc",
+            "datetimeFirst_local",
+            "datetimeLast_utc",
+            "datetimeLast_local",
+        ]:
+            faltened_dict.pop(key, None)
+
+        faltened_df = self.get_measurement_df(faltened_dict)
+        name_id_df = faltened_df[["name", "id"]]
+
+        return dict(zip(name_id_df["name"], name_id_df["id"]))
+
+    def get_pollutants_from_histry(
+        self,
+        stations_res: dict,
+        station_id: str,
+        key: str = "results",
+    ):
+        faltened_dict = self.get_flattended_measurement(res=stations_res, key=key)
+        for key in [
+            "datetimeFirst",
+            "datetimeLast",
+            "datetimeFirst_utc",
+            "datetimeFirst_local",
+            "datetimeLast_utc",
+            "datetimeLast_local",
+        ]:
+            faltened_dict.pop(key, None)
+
+        faltened_df = self.get_measurement_df(faltened_dict)
+        sensor_df = faltened_df[faltened_df["id"] == station_id]["sensors"]
+        flat_json = self.get_flattended_measurement(
+            res={"sensors": sensor_df.values.tolist()[0]}, key="sensors"
+        )
+        s_df = self.get_measurement_df(flat_json)
+        return dict(zip(s_df["parameter_displayName"], s_df["id"]))
+
+    def get_imshow_df(self, df: pd.DataFrame) -> pd.DataFrame:
+        tdf = df.pivot_table(
+            index="year_month", columns="day", values="value", aggfunc="mean"
+        )
+        tdf = tdf.fillna(method="ffill").fillna(tdf.mean(numeric_only=True))
+        return tdf
