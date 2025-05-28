@@ -26,9 +26,9 @@ aqi_repo = AQIRepo()
 
 
 @st.cache_data
-def get_real_time_aqi_w_cord(lat, long):
+def get_real_time_aqi_w_ip():
     try:
-        res = aqi_repo.get_real_time_waqi(RealTimeAQI.LAT_LONG, lat=lat, long=long)
+        res = aqi_repo.get_real_time_waqi(RealTimeAQI.IP_BASED)
         return res
     except Exception as e:
         print(e)
@@ -83,7 +83,8 @@ else:
     )
 
     try:
-        res = get_real_time_aqi_w_cord(cordinates[0], cordinates[1])
+        # cordinates[0], cordinates[1]
+        res = get_real_time_aqi_w_ip()
     except Exception as e:
         exception = e
 
