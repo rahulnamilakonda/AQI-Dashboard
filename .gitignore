@@ -4,3 +4,4 @@ note_book.ipynb
 **/__pycache__
 */__pycache__/
 test.py
+data/*.db
