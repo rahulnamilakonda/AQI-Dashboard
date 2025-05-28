@@ -8,7 +8,7 @@ import pandas as pd
 class LocalRepo:
 
     def __init__(self):
-        self._conn = sqlite3.connect("sql.db")
+        self._conn = sqlite3.connect("data/sql.db")
         self._cursor = self._conn.cursor()
         self._create_table()
 
