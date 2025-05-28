@@ -48,11 +48,12 @@ def get_real_time_aqi_near_by(lat: str, long: str, lat2: str, long2: str):
 
 def show_error(exception):
     message = get_error_message(exception)
-    markdown(
-        f"""
-        <h2 style='text-align: center; color: red;'>{message}</h2>
-        """
-    )
+    st.error(message)
+    # markdown(
+    #     f"""
+    #     <h2 style='text-align: center; color: red;'>{message}</h2>
+    #     """
+    # )
 
 
 draw_header()
