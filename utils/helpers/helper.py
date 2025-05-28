@@ -5,6 +5,7 @@ from app_data.exceptions.app_exceptions import (
     ClientSideException,
     ConnectionException,
     FetchDataException,
+    HistWAIErrorException,
     ServerSideException,
     TimeOutException,
     WAQIErrorException,
@@ -24,7 +25,7 @@ def get_error_message(exception):
     if type(exception) is type(TimeOutException):
         return "Timed out"
     elif type(exception) is ConnectionException:
-        return "Connection not found"
+        return "Connection not found, Please check your network connection."
     elif type(exception) is ClientSideException:
         return "Client side exception"
     elif type(exception) is ServerSideException:
@@ -32,6 +33,8 @@ def get_error_message(exception):
     elif type(exception) is FetchDataException:
         return "Failed to fetch data"
     elif type(exception) is WAQIErrorException:
+        return exception.error
+    elif type(exception) is HistWAIErrorException:
         return exception.error
     else:
         return exception

@@ -44,3 +44,8 @@ class FetchDataException(AppExceptions):
 class WAQIErrorException(AppExceptions):
     def __init__(self, error):
         super().__init__(error, "WAQIErrorException")
+
+
+class HistWAIErrorException(AppExceptions):
+    def __init__(self, error):
+        super().__init__(error, "HistWAIErrorException")
