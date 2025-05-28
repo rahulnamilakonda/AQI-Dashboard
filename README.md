@@ -24,12 +24,11 @@ Follow these steps to set up and run the AQI Dashboard on your local machine.
 
 ### Installation
 
-1. **Clone the repository** (if applicable):
+1. **Clone the repository**:
    ```bash
-   git clone <your-repository-url>
-   cd aqi-dashboard-project
+   git clone https://github.com/rahulnamilakonda/AQI-Dashboard.git
+   cd AQI-Dashboard
    ```
-   *(Replace `<your-repository-url>` with the actual URL of your project's Git repository.)*
 
 2. **Create a Virtual Environment** (Recommended):
    It's highly recommended to create a virtual environment to manage project dependencies.
@@ -78,17 +77,30 @@ This project uses data from **OpenAQ** and **AQICN (WAQI)**. You'll need to obta
 
    > **Important**: Replace `"your_openaq_api_key_here"` and `"your_waqi_api_key_here"` with your actual API keys. Do not commit this `.env` file to your version control system for security reasons.
 
-## ▶️ Usage
+## ▶️ Running the Application
 
 Once you have installed the dependencies and set up your API keys, you can run the dashboard:
 
-1. Ensure your virtual environment is active
-2. Run the Streamlit application:
+1. **Ensure your virtual environment is active**:
+   - If not already active, activate it using the commands from step 3 in the installation section
+
+2. **Navigate to the project directory** (if not already there):
+   ```bash
+   cd AQI-Dashboard
+   ```
+
+3. **Run the Streamlit application**:
    ```bash
    streamlit run dashboard.py
    ```
 
-This command will open the AQI Dashboard in your default web browser.
+4. **Access the dashboard**:
+   - The command will automatically open the AQI Dashboard in your default web browser
+   - If it doesn't open automatically, you can manually navigate to the URL shown in the terminal (usually `http://localhost:8501`)
+
+### Stopping the Application
+
+To stop the dashboard, press `Ctrl + C` in the terminal where the application is running.
 
 ## 🌐 Live Demo
 
