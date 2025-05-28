@@ -56,6 +56,9 @@ class AQIRepo:
             r_url = f"{RealTimeAQI.LAT_LONG_RANGE.value}"
             parms["latlng"] = f"{lat},{long},{lat2},{long2}"
 
+        elif real_time_aqi == RealTimeAQI.IP_BASED:
+            r_url = RealTimeAQI.IP_BASED.value
+
         else:
             assert real_time_aqi in RealTimeAQI, "Please provide valid real time aqi"
 

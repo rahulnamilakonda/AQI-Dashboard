@@ -7,6 +7,7 @@ from utils.constants.urls import (
     WQAPI_REAL_TIME_CITY,
     WQAPI_REAL_TIME_CORDS,
     WQAPI_REAL_TIME_CORDS_RANGE,
+    WQAPI_REAL_TIME_IP,
 )
 
 
@@ -17,6 +18,7 @@ class Measurements(enum.Enum):
 
 
 class RealTimeAQI(enum.Enum):
+    IP_BASED = WQAPI_REAL_TIME_IP
     CITY_BASED = WQAPI_REAL_TIME_CITY
     LAT_LONG = WQAPI_REAL_TIME_CORDS
     LAT_LONG_RANGE = WQAPI_REAL_TIME_CORDS_RANGE
