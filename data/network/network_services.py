@@ -1,8 +1,8 @@
-from app_data.network.base_api_services import BaseApiServices
+from data.network.base_api_services import BaseApiServices
 
 import requests
 
-from app_data.exceptions.app_exceptions import (
+from data.exceptions.app_exceptions import (
     ClientSideException,
     ConnectionException,
     FetchDataException,
