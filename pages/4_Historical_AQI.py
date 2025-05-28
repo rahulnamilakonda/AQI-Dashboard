@@ -2,7 +2,7 @@ from datetime import datetime
 import json
 import streamlit as st
 
-from app_data.exceptions.app_exceptions import HistWAIErrorException
+from data.exceptions.app_exceptions import HistWAIErrorException
 from controller.aqi_controller import AQIController
 from repo.aqi_repo import AQIRepo
 from repo.local_repo import LocalRepo

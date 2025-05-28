@@ -2,8 +2,8 @@ from debug import DEBUG
 import requests
 import json
 import traceback
-from app_data.exceptions.app_exceptions import WAQIErrorException
-from app_data.network.network_services import NetworkServices
+from data.exceptions.app_exceptions import WAQIErrorException
+from data.network.network_services import NetworkServices
 from models.open_qi_response_model import OpenQIResponse
 from utils.constants.api_constants import WAQI_ERROR_STATUS, WAQI_SUCCESS_STATUS
 from utils.constants.enums import RealTimeAQI, Measurements

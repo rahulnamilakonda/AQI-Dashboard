@@ -1,7 +1,7 @@
 import streamlit as st
 import plotly.express as px
 
-from app_data.exceptions.app_exceptions import (
+from data.exceptions.app_exceptions import (
     ClientSideException,
     ConnectionException,
     FetchDataException,
