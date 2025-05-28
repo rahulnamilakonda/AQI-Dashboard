@@ -1,3 +1,4 @@
+import os
 import streamlit as st
 import plotly.express as px
 
@@ -163,9 +164,9 @@ def draw_header(pname=None):
         f"""<h1 style='text-align: center; font-weight: bold;'>Air Quality Index (AQI){page_name}</h1>""",
     )
 
-    st.image(
-        r"C:\data-science-projects\waqi\assets\aqi_head.png", use_container_width=True
-    )
+    img_path = os.path.join("assets", "aqi_head.png")
+
+    st.image(f"{img_path}", use_container_width=True)
 
 
 def draw_footer():
