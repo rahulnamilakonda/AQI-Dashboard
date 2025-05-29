@@ -22,7 +22,7 @@ GET_MEASUREMENTS_BY_SENSOR_ID_YEARS = (
 WQAPI_REAL_TIME_CITY = "https://api.waqi.info/feed/{city}/"
 
 # Based on ip
-WQAPI_REAL_TIME_IP = "https://api.waqi.info/feed/"
+WQAPI_REAL_TIME_IP = "https://api.waqi.info/feed/here/"
 
 # Real Time AQI for lats and longs.
 # /feed/geo::lat;:lng/?token=:token

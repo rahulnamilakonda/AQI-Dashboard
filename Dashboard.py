@@ -2,6 +2,7 @@ from datetime import time
 from time import sleep
 import streamlit as st
 import plotly.express as px
+from streamlit_js_eval import get_geolocation
 
 
 from controller.aqi_controller import AQIController
@@ -21,17 +22,18 @@ st.set_page_config(page_title="Dashboard", layout="wide")
 aqi_cont = AQIController()
 aqi_repo = AQIRepo()
 
+loc = get_geolocation()
+
 # st.session_state.pop("res", None)
 # st.session_state.pop("disable_input", None)
 
 
 @st.cache_data
-def get_real_time_aqi_w_ip():
+def get_real_time_aqi_w_cords(lat: str, lng: str):
     try:
-        res = aqi_repo.get_real_time_waqi(RealTimeAQI.IP_BASED)
+        res = aqi_repo.get_real_time_waqi(RealTimeAQI.LAT_LONG, lat=lat, long=lng)
         return res
     except Exception as e:
-        print(e)
         raise e
 
 
@@ -62,10 +64,11 @@ exception = None
 res = None
 cordinates = None
 
-try:
-    cordinates = aqi_cont.get_current_gps_coordinates()
-except Exception as e:
-    exception = e
+if loc and "coords" in loc:
+    st.success("📍 Your location was fetched successfully!")
+    cordinates = (loc["coords"]["latitude"], loc["coords"]["longitude"])
+else:
+    exception = "Please enable location permission or result..."
 
 # cordinates = (11111, 22222)
 
@@ -84,7 +87,7 @@ else:
 
     try:
         # cordinates[0], cordinates[1]
-        res = get_real_time_aqi_w_ip()
+        res = get_real_time_aqi_w_cords(cordinates[0], cordinates[1])
     except Exception as e:
         exception = e
 
@@ -95,7 +98,7 @@ else:
         show_error("Data not found")
 
     else:
-        draw_raqi_forecast(aqi_cont, res)
+        draw_raqi_forecast(aqi_cont, res, show_cords=False)
 
         col1, col2, col3 = st.columns([1, 2, 1])
         aqi_lat, aqi_long = None, None
