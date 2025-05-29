@@ -80,9 +80,9 @@ def draw_raqi_forecast(
         markdown(
             f"<h4 style='text-align:center; font-weight: 300;'> Current AQI at {location} is: <b>{aqi_val}</b> </h4>"
         )
-    markdown(
-        f"<h3 style='text-align: center'; > Dominant Pollutant: {dom_ploutant} </h3>"
-    )
+        markdown(
+            f"<h3 style='text-align: center'; > Dominant Pollutant: {dom_ploutant} </h3>"
+        )
 
     pollutants = aqi_cont.filter_pollutants(res)
     col1, col2 = st.columns(2)

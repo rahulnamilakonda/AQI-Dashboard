@@ -102,7 +102,7 @@ else:
         show_error("Data not found")
 
     else:
-        draw_raqi_forecast(aqi_cont, res, show_cords=False)
+        draw_raqi_forecast(aqi_cont, res, show_cords=True)
 
         col1, col2, col3 = st.columns([1, 2, 1])
         aqi_lat, aqi_long = None, None
