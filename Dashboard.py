@@ -86,7 +86,7 @@ else:
         f"<h2 style='text-align: center;'> Welcome, {aqi_cont.get_greeting_from_location(loc)}</h2>"
     )
     markdown(
-        f"<h3 style='text-align: center; font-weight: 300;'>You're Current Coordinates: <b>{cordinates[0]}, {cordinates[1]} </b> </h3>",
+        f"<h3 style='text-align: center; font-weight: 300;'>Your Current Coordinates: <b>{cordinates[0]}, {cordinates[1]} </b> </h3>",
     )
 
     try:
