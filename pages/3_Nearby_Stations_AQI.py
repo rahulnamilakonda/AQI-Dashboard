@@ -152,7 +152,9 @@ if get_aqi_button or "res_cords_range   " in st.session_state:
 
             except Exception as e:
                 msg = get_error_message(e)
-                st.error(f"{msg}")
+                st.info(f"{msg}")
+                st.session_state.pop("disable_input_cord_range", None)
+                st.session_state.pop("res_cords_range", None)
 
             try_diff_contry = st.button(
                 label="Try Different Cordinates",
