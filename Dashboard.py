@@ -86,12 +86,12 @@ else:
         f"<h2 style='text-align: center;'> Welcome, {aqi_cont.get_greeting_from_location(loc)}</h2>"
     )
     markdown(
-        f"<h3 style='text-align: center; font-weight: 300;'>Your Current Coordinates: <b>{cordinates[0]}, {cordinates[1]} </b> </h3>",
+        f"<h3 style='text-align: center; font-weight: 300;'>Your Current Coordinates: <b> {cordinates[0]:.4f}, {cordinates[1]:.4f} </b> </h3>",
     )
 
     try:
         # cordinates[0], cordinates[1]
-        res = get_real_time_aqi_w_cords(cordinates[0], cordinates[1])
+        res = get_real_time_aqi_w_cords(f"{cordinates[0]}", f"{cordinates[1]}")
     except Exception as e:
         exception = e
 
