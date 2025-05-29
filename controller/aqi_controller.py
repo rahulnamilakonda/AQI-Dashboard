@@ -210,11 +210,11 @@ class AQIController:
         except Exception as e:
             raise e
 
-    def get_greeting_from_location(loc):
+    def get_greeting_from_location(self, loc):
         if loc and "coords" in loc:
             lat = loc["coords"]["latitude"]
             lon = loc["coords"]["longitude"]
-            local_time = get_local_time_from_coords(lat, lon)
+            local_time = self.get_local_time_from_coords(lat, lon)
             if local_time:
                 hour = local_time.hour
                 if 4 <= hour < 12:
@@ -225,7 +225,7 @@ class AQIController:
                     return "🌇 Good Evening"
         return "👋 Hello"
 
-    def get_local_time_from_coords(lat, lon):
+    def get_local_time_from_coords(self, lat, lon):
         tf = TimezoneFinder()
         tz_name = tf.timezone_at(lat=lat, lng=lon)
         if tz_name:
