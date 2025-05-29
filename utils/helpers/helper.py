@@ -76,13 +76,14 @@ def draw_raqi_forecast(
     dom_ploutant = aqi_cont.get_dominant_pol(res)
     location = search_str if search_str else "your location"
 
-    if show_cords:
-        markdown(
-            f"<h3 style='text-align: center'; > Dominant Pollutant: {dom_ploutant} </h3>"
-        )
-        markdown(
-            f"<h4 style='text-align:center; font-weight: 300;'> Current AQI at {location} is: <b>{aqi_val}</b> </h4>"
-        )
+    markdown(
+        f"<h3 style='text-align: center'; > Dominant Pollutant: {dom_ploutant} </h3>"
+    )
+
+    # if show_cords:
+    markdown(
+        f"<h4 style='text-align:center; font-weight: 300;'> Current AQI at {location} is: <b>{aqi_val}</b> </h4>"
+    )
 
     pollutants = aqi_cont.filter_pollutants(res)
     col1, col2 = st.columns(2)
