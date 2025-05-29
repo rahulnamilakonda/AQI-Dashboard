@@ -104,7 +104,7 @@ To stop the dashboard, press `Ctrl + C` in the terminal where the application is
 
 ## 🌐 Live Demo
 
-You can access a live version of the dashboard at: [www.dashbordai.com](http://www.dashbordai.com)
+You can access a live version of the dashboard at: [www.aqi-dashboard-servs.streamlit.app/](https://aqi-dashboard-servs.streamlit.app/)
 
 ## 🤝 Contributing
 
