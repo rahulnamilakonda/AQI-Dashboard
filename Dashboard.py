@@ -58,17 +58,21 @@ def show_error(exception):
     # )
 
 
-draw_header()
-
 exception = None
 res = None
 cordinates = None
+
 
 if loc and "coords" in loc:
     st.success("📍 Your location was fetched successfully!")
     cordinates = (loc["coords"]["latitude"], loc["coords"]["longitude"])
 else:
-    exception = "Please enable location permission or result..."
+    st.error("Please enable location permission or result...")
+    # exception = "Please enable location permission or result..."
+
+
+draw_header()
+
 
 # cordinates = (11111, 22222)
 
