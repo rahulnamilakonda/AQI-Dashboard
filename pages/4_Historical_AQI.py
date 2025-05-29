@@ -6,7 +6,7 @@ from data.exceptions.app_exceptions import HistWAIErrorException
 from controller.aqi_controller import AQIController
 from repo.aqi_repo import AQIRepo
 from repo.local_repo import LocalRepo
-from utils.constants.enums import Measurements
+from utils.constants.enums import Measurements, Stats
 from utils.helpers.helper import draw_footer, draw_header, get_error_message, markdown
 import plotly.express as px
 import pandas as pd
@@ -39,7 +39,11 @@ def get_stations_and_pollutants(country_id: int):
 
 @st.cache_data(show_spinner=False)
 def load_aqi_data(
-    sensor_id: int, poll_name: str, from_year: int, to_year: int
+    sensor_id: int,
+    poll_name: str,
+    from_year: int,
+    to_year: int,
+    stat: Stats,
 ) -> pd.DataFrame:
     try:
         from_date = datetime(year=from_year, month=1, day=1)
@@ -84,7 +88,7 @@ def load_aqi_data(
 
         t_df = aqi_cont.get_transformed_measurement(measure_df)
 
-        t_df = aqi_cont.get_imshow_df(t_df)
+        t_df = aqi_cont.get_imshow_df(t_df, stat)
         st.session_state["t_df"] = t_df.to_dict()
         return t_df
 
@@ -103,6 +107,10 @@ def on_change_country():
 
 
 def on_change_station_poll_dates():
+    st.session_state.pop("t_df", None)
+
+
+def on_change_seg_control():
     st.session_state.pop("t_df", None)
 
 
@@ -189,6 +197,28 @@ if countries_res:
                 st.session_state["from_year"] = from_year
                 st.session_state["to_year"] = to_year
 
+                stats_sel = st.segmented_control(
+                    "",
+                    options=[
+                        Stats.AVERAGE.name.title(),
+                        Stats.MINIMUM.name.title(),
+                        Stats.MAXIMUM.name.title(),
+                    ],
+                    selection_mode="single",
+                    default=Stats.AVERAGE.name.title(),
+                    on_change=on_change_seg_control,
+                )
+
+                stats: Stats = (
+                    Stats.MAXIMUM
+                    if stats_sel == Stats.MAXIMUM.name.title()
+                    else (
+                        Stats.MINIMUM
+                        if stats_sel == Stats.MINIMUM.name.title()
+                        else Stats.AVERAGE
+                    )
+                )
+
                 fetch_data_bt = st.button(
                     "Fetch Data", use_container_width=True, on_click=on_click_fetch
                 )
@@ -206,6 +236,7 @@ if countries_res:
                                     poll_name=selected_poll,
                                     from_year=from_year,
                                     to_year=to_year,
+                                    stat=stats,
                                 )
                             except Exception as e:
                                 error_msg = get_error_message(e)
@@ -223,13 +254,13 @@ if countries_res:
                                 labels=dict(
                                     x="Days",
                                     y="Month-Year",
-                                    color=f"{selected_poll} (Avg)",
+                                    color=f"{selected_poll} ({stats.value.title()})",
                                 ),
                                 height=800,
                                 color_continuous_scale="viridis",
                             )
                             fig.update_layout(
-                                title=f"{selected_poll} Summary Average Heatmap"
+                                title=f"{selected_poll} Summary {stats_sel} Heatmap"
                             )
                             fig.update_xaxes(
                                 tickmode="array",

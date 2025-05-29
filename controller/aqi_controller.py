@@ -291,9 +291,26 @@ class AQIController:
         s_df = self.get_measurement_df(flat_json)
         return dict(zip(s_df["parameter_displayName"], s_df["id"]))
 
-    def get_imshow_df(self, df: pd.DataFrame) -> pd.DataFrame:
-        tdf = df.pivot_table(
-            index="year_month", columns="day", values="value", aggfunc="mean"
-        )
+    def get_imshow_df(self, df: pd.DataFrame, stats: Stats) -> pd.DataFrame:
+
+        if stats == Stats.MAXIMUM:
+            tdf = df.pivot(
+                index="year_month",
+                columns="day",
+                values="summary_max",
+            )
+        elif stats == Stats.MINIMUM:
+            tdf = df.pivot(
+                index="year_month",
+                columns="day",
+                values="summary_min",
+            )
+        else:
+            tdf = df.pivot(
+                index="year_month",
+                columns="day",
+                values="summary_avg",
+            )
+
         tdf = tdf.fillna(method="ffill").fillna(tdf.mean(numeric_only=True))
         return tdf
