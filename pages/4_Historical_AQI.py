@@ -95,11 +95,15 @@ def load_aqi_data(
 
 
 def on_click_fetch():
-    st.session_state.pop("measure_res", None)
+    st.session_state.pop("t_df", None)
 
 
 def on_change_country():
     st.session_state.pop("stations_res", None)
+
+
+def on_change_station_poll_dates():
+    st.session_state.pop("t_df", None)
 
 
 # @st.cache_data(show_spinner='False')
@@ -148,7 +152,9 @@ if countries_res:
         if stations_res:
             stations = aqi_cont.get_stations(stations_res)
             selected_station = st.selectbox(
-                label="Select Location", options=list(stations.keys())
+                label="Select Location",
+                options=list(stations.keys()),
+                # on_change=on_change_station_poll_dates,
             )
 
             if selected_station:
@@ -161,7 +167,9 @@ if countries_res:
                 )
 
                 selected_poll = st.selectbox(
-                    label="Select Pollutant", options=list(sensors_poll.keys())
+                    label="Select Pollutant",
+                    options=list(sensors_poll.keys()),
+                    # on_change=on_change_station_poll_dates,
                 )
 
                 current_year = datetime.now().year
@@ -169,10 +177,12 @@ if countries_res:
                 from_year = st.selectbox(
                     label="From Date",
                     options=[year for year in range(2020, current_year + 1)],
+                    # on_change=on_change_station_poll_dates,
                 )
                 to_year = st.selectbox(
                     label="To Date",
                     options=[year for year in range(from_year + 1, current_year + 1)],
+                    # on_change=on_change_station_poll_dates,
                 )
 
                 st.session_state["selected_poll"] = selected_poll
