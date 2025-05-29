@@ -83,7 +83,7 @@ elif not cordinates:
     show_error("Coordinates not found, Please check your network connection.")
 else:
     markdown(
-        f"<h2 style='text-align: center;'> Welcome, {aqi_cont.get_gretting()}</h2>"
+        f"<h2 style='text-align: center;'> Welcome, {aqi_cont.get_greeting_from_location(loc)}</h2>"
     )
     markdown(
         f"<h3 style='text-align: center; font-weight: 300;'>You're Current Coordinates: <b>{cordinates[0]}, {cordinates[1]} </b> </h3>",

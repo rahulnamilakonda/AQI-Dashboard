@@ -4,7 +4,11 @@ import geocoder
 import pandas as pd
 import numpy as np
 from datetime import datetime
+import pytz
 import streamlit as st
+from streamlit_js_eval import streamlit_js_eval
+from timezonefinder import TimezoneFinder
+
 
 from utils.constants.enums import Stats
 
@@ -206,16 +210,28 @@ class AQIController:
         except Exception as e:
             raise e
 
-    def get_gretting(self):
-        hour = datetime.now().hour
-        if 4 <= hour < 12:
-            return "Good Morning"
+    def get_greeting_from_location(loc):
+        if loc and "coords" in loc:
+            lat = loc["coords"]["latitude"]
+            lon = loc["coords"]["longitude"]
+            local_time = get_local_time_from_coords(lat, lon)
+            if local_time:
+                hour = local_time.hour
+                if 4 <= hour < 12:
+                    return "🌅 Good Morning"
+                elif 12 <= hour < 16:
+                    return "☀️ Good Afternoon"
+                else:
+                    return "🌇 Good Evening"
+        return "👋 Hello"
 
-        elif 12 <= hour < 16:
-            return "Good Afternoon"
-
-        else:
-            return "Good Evening"
+    def get_local_time_from_coords(lat, lon):
+        tf = TimezoneFinder()
+        tz_name = tf.timezone_at(lat=lat, lng=lon)
+        if tz_name:
+            tz = pytz.timezone(tz_name)
+            return datetime.now(tz)
+        return None
 
     def cord_from_real_aqi_response(self, res: dict) -> tuple:
         return tuple(res["data"]["city"]["geo"])
